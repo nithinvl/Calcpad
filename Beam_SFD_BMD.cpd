@@ -1,0 +1,60 @@
+"SFD & BMD - Simply Supported Beam"
+'Beam Span, 'L = ? {7}m
+'Concentrated Load, 'P = ? {100}kN
+'Position of concentrated load from left support, 'a = ? {1}m
+'UDL, 'w = ? {30}kN/m
+'Start position of UDL from left support, 'b_1 = ? {5}m
+'Final position of UDL from left support, 'b_2 = ? {6}m
+
+
+
+#hide
+R_A1 = P*(L - a)/L
+R_A2 = (w*(b_2 - b_1)*(L - (b_1 + b_2)/2))/L
+R_A = R_A1 + R_A2
+R_B = P + w*(b_2 - b_1) - R_A
+S_1(x) = and(x ≥ 0m; x ≤ a)*R_A1 + and(x > a; x ≤ L)*(R_A1 - P)
+S_2(x) = and(x ≥ 0m; x ≤ b_1)*R_A2 + and(x > b_1; x ≤ b_2)*(R_A2 - w*(x - b_1)) + and(x > b_2; x ≤ L)*(R_A2 - w*(b_2 - b_1))
+#show
+#val
+#show
+#show
+'<svg width = "900"height = "250"xmlns = "http://www.w3.org/2000/svg" > 
+'<line x1 = "50" y1 = "120" x2 = "680" y2 = "120" style = "stroke:black;stroke-width:20" /> 
+'<rect width = "'(b_2 - b_1)*630/L'" height = "40" x = "'50 + b_1*630/L'" y = "70" style = "fill:red;stroke-width:3;stroke:red" />
+'<polygon points = "50,130 30,160 70,160" style = "fill:none;stroke:black;stroke-width:2" />
+'<polygon points = "680,130 660,160 700,160" style = "fill:none;stroke:black;stroke-width:2" />
+'<line x1 = "'50 + (a/L)*630'" y1 = "-70" x2 = "'50 + (a/L)*630'" y2 = "110" style = "stroke:black;stroke-width:3" /> 
+'<polyline points = "'40 + (a/L)*630',90 '50 + (a/L)*630',110 '60 + (a/L)*630',90" style = "fill:none;stroke:black;stroke-width:3" /> 
+'<text x="-10" y="120" >x='0'm</text>
+'<text x="700" y="120" >x='L'm</text>
+'<text x="'60 + a*630/L'" y="-60" >'P'kN</text>
+'<text x="'60 + a*630/L'" y="-20" >x='a'm</text>
+'<text x="'50 + b_1*630/L'" y="60" transform="rotate(-40 '50 + b_1*630/L',60)">x='b_1'm</text>
+'<text x="'50 + b_2*630/L'" y="60" transform="rotate(-40 '50 + b_2*630/L',60)">x='b_2'm</text>
+'<text x="'50 + 0.5*(b_1 + b_2)*630/L'" y="60" transform="rotate(-40 '50 + 0.5*(b_1 + b_2)*630/L',60)">'w'kN/m</text>
+'<line x1 = "50" y1 = "250" x2 = "50" y2 = "170" style = "stroke:black;stroke-width:2" /> 
+'<polyline points = "40,190 50,170 60,190" style = "fill:none;stroke:black;stroke-width:2" /> 
+'<line x1 = "680" y1 = "250" x2 = "680" y2 = "170" style = "stroke:black;stroke-width:2" /> 
+'<polyline points = "670,190 680,170 690,190" style = "fill:none;stroke:black;stroke-width:2" /> 
+'<text x="60" y="220" >'R_A'kN</text>
+'<text x="690" y="220" >'R_B'kN</text> 
+'</svg>
+#equ
+
+
+'<p style="font:20pt Calibri"> <b> Shear Force Diagram </b> </p>
+
+'<p style="font:12pt Times-New-Roman;"> Shear Force (kN) </p> 
+$Plot{S_1(x) + S_2(x) @ x = 0m : L}
+
+
+#hide
+M_1(x) = and(x ≥ 0m; x ≤ a)*R_A1*x + and(x > a; x ≤ L)*(R_A1*x - P*(x - a))
+M_2(x) = and(x ≥ 0m; x ≤ b_1)*R_A2*x + and(x > b_1; x ≤ b_2)*(R_A2*x - w*((x - b_1)^2)/2) + and(x > b_2; x ≤ L)*(R_A2*x - w*(b_2 - b_1)*(x - (b_1 + b_2)/2))
+#show
+
+'<p style="font:20pt Calibri"> <b> Bending Moment Diagram </b> </p>
+
+'<p style="font:12pt Times-New-Roman;"> Bending Moment (kN.m) </p> 
+$Plot{M_1(x) + M_2(x) @ x = 0m : L}
