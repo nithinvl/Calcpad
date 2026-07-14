@@ -1,0 +1,54 @@
+
+k = 5000
+a = 0.02
+xy = 1
+
+h(x) = if(x < 0; 0; 1)
+f(x) = k*x*h(xy - abs(x) - 10^-12) + sign(x)*(k*xy + a*k*(abs(x) - xy))*h(abs(x) - xy)
+
+$Plot{f(x) @ x = -10 : 10}
+
+#hide
+x0a = 2.0
+f0a = 1000.0
+x1 = -2.0
+dx = 0.001
+g1(x) = a*k*x + (1 - a)*k*xy
+g2(x) = a*k*x - (1 - a)*k*xy
+
+x0 = x0a
+f0 = f0a
+
+#hide
+disp = vector(1)
+disp.1 = x0a
+force = vector(1)
+force.1 = f0a
+
+#while abs(abs(x0 - x1) - 10^-9) > 0.001
+	x0
+	#if and(f0a < g1(x0a); f0a > g2(x0a))
+		c = f0 - k*x0
+		x0 = x0 + dx*sign(x1 - x0)
+		f0 = k*x0 + c
+		#if f0 > g1(x0)
+			f0 = g1(x0)
+		#end if
+		#if f0 < g2(x0)
+			f0 = g2(x0)
+		#end if
+	#end if
+	disp = join(disp; x0)
+	force = join(force; f0)
+#loop
+
+#show
+n = size(disp)
+$Plot{disp.i|force.i @ i = 1 : n}
+
+
+#hide
+x = range(0; 10; 0.1)
+y = x
+n = size(x)
+$Plot{x.i|y.i @ i = 1 : n}
